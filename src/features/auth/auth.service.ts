@@ -44,7 +44,6 @@ export class AuthService {
       id: user.id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
     };
 
     let refresh_token: string;
@@ -60,7 +59,6 @@ export class AuthService {
       user: {
         name: user.name,
         email: user.email,
-        phone: user.phone,
       },
       access_token: await this.jwtService.signAsync(
         payload,

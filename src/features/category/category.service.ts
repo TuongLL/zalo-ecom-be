@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db';
 import { CategoryDto } from './dto';
+import { stringToSlug } from 'src/utils';
 
 @Injectable()
 export class CategoryService {
@@ -8,7 +9,10 @@ export class CategoryService {
 
   async createCategory(dto: CategoryDto) {
     return await this.prismaService.category.create({
-      data: dto,
+      data: {
+        ...dto,
+        slug: stringToSlug(dto.name),
+      },
     });
   }
 

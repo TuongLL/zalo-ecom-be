@@ -11,7 +11,7 @@ export class CommentController {
 
     @Post()
     async createComment(@Body() body: CommentDto){
-        return await this.commentService.createComment(body);
+        // return await this.commentService.createComment(body);
     }
 
     @Get(':productId')

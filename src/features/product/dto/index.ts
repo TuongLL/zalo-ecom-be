@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -17,32 +18,46 @@ export class ProductDto {
 
   @IsString()
   @IsOptional()
-  short_description: string;
+  shortDescription: string;
 
-  @IsString()
+  @IsOptional()
   @IsNotEmpty()
   slug: string;
 
   @IsBoolean()
   @IsOptional()
-  is_stock: boolean;
+  isStock: boolean;
 
   @IsBoolean()
   @IsOptional()
-  is_best_seller: boolean;
+  isBestSeller: boolean;
 
   @IsNumber()
   @IsNotEmpty()
   price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  discountPrice: number;
 
   @IsNotEmpty()
   media: MediaType[];
 }
 
 export class ProductCreateDto extends ProductDto {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   categoryId: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  variants: Variant[];
+}
+
+interface Variant {
+  name: string;
+  price: number;
+  discountPrice: number;
 }
 
 export class MediaType {
@@ -50,11 +65,25 @@ export class MediaType {
   type: 'image' | 'video';
 }
 
-// name              String
-//   description       String
-//   short_description String
-//   media             Json[]
-//   slug              String
-//   is_stock          Boolean
-//   is_best_seller    Boolean
-//   price             Float
+export interface QueryParamsProduct {
+  page?: number;
+
+  sort?: 'price-asc' | 'price-desc';
+
+  filterByPrice?: {
+    startPrice: number;
+    endPrice: number;
+  };
+  categoryId?: string;
+  ratingPoint?: number;
+}
+
+export class UpdateStatusDto {
+  @IsBoolean()
+  @IsNotEmpty()
+  isBestSeller: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  isStock: boolean;
+}

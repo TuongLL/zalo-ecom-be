@@ -8,8 +8,4 @@ export class CategoryDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @IsString()
-  @IsNotEmpty()
-  slug: string;
 }

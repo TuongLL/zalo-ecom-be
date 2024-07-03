@@ -1,7 +1,6 @@
 export type UserPayload = {
   id: string;
   name: string;
-  phone: string;
   email: string;
 };
 

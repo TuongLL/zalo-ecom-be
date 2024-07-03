@@ -10,13 +10,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://postgres.brilptnqciadhcotfywv:zalo_freelance_ecom1@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+  url      = "postgres://postgres.bdeerfgeknxmoczimwqg:zalo_ecom123@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  phone     String   @unique
   name      String?
   password  String
   createdAt DateTime @default(now())
@@ -24,18 +23,36 @@ model User {
 }
 
 model Product {
-  id                String    @id @default(cuid())
-  name              String
-  description       String
-  short_description String
-  media             Json[]
-  slug              String    @unique 
-  is_stock          Boolean
-  is_best_seller    Boolean
-  price             Float
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  Comment           Comment[]
+  id               String            @id @default(cuid())
+  name             String
+  description      String
+  shortDescription String
+  media            Json[]            @default([])
+  slug             String            @unique
+  isStock          Boolean           @default(true)
+  isBestSeller     Boolean           @default(false)
+  price            Float
+  discountPrice    Float?
+  ratingPoint      Float             @default(0)
+  ratingCount      Int               @default(0)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  Comment          Comment[]
+  Rating           Rating[]
+  ProductCategory  ProductCategory[]
+  ProductVariant   ProductVariant[]
+  OrderItem        OrderItem[]
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  rating    Float
+  email     String
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
 }
 
 model Category {
@@ -50,38 +67,74 @@ model Category {
 model ProductCategory {
   id         String   @id @default(cuid())
   productId  String
+  product    Product  @relation(fields: [productId], references: [id])
   categoryId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
 model ProductVariant {
-  id        String   @id @default(cuid())
-  productId String
-  name      String
-  image     String
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Cart      Cart?    @relation(fields: [cartId], references: [id])
-  cartId    String?
+  id            String      @id @default(cuid())
+  productId     String
+  name          String
+  price         Float
+  discountPrice Float?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  product       Product     @relation(fields: [productId], references: [id])
+  OrderItem     OrderItem[]
 }
 
 model Cart {
-  id       String           @id @default(cuid())
-  email    String
-  phone    String
-  address  String
-  products ProductVariant[]
+  id      String @id @default(cuid())
+  email   String
+  phone   String
+  address String
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  product   Product  @relation(fields: [productId], references: [id])
-  content   String
-  email     String
+  id          String   @id @default(cuid())
+  product     Product  @relation(fields: [productId], references: [id])
+  content     String
+  phone       String
+  name        String
+  ratingPoint Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  productId   String
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  name      String
   phone     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  productId String
+  address   String
+  status    OrderStatus @default(PENDING)
+  total     Float
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderItem OrderItem[]
+}
+
+model OrderItem {
+  id               String         @id @default(cuid())
+  name             String
+  discountPrice    Float
+  image            String
+  productId        String
+  product          Product        @relation(fields: [productId], references: [id])
+  quantity         Int
+  price            Float
+  order            Order          @relation(fields: [orderId], references: [id])
+  orderId          String
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
 }
