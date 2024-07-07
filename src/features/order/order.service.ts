@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db';
-import { OrderDto } from './dtos/order.dto';
+import { OrderDto, UpdateOrderStatusDto } from './dtos/order.dto';
 
 @Injectable()
 export class OrderService {
@@ -33,12 +33,22 @@ export class OrderService {
   }
 
   async getOrder(page: number = 1) {
-    console.log(page)
+    console.log(page);
     return await this.prismaServie.order.findMany({
       skip: (page - 1) * 10,
       take: 10,
       include: {
         OrderItem: true,
+      },
+    });
+  }
+  async updateOrderStatus(id: string, body: UpdateOrderStatusDto) {
+    return await this.prismaServie.order.update({
+      where: {
+        id,
+      },
+      data: {
+        status: body.status,
       },
     });
   }

@@ -1,4 +1,5 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { OrderStatus } from '@prisma/client';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class OrderDto {
   @IsNotEmpty()
@@ -28,4 +29,10 @@ export class OrderDto {
     discountPrice: number;
     quantity: number;
   }[];
+}
+
+export class UpdateOrderStatusDto {
+  @IsNotEmpty()
+  @IsEnum(OrderStatus)
+  status: keyof typeof OrderStatus;
 }

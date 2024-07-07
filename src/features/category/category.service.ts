@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db';
-import { CategoryDto } from './dto';
+import { CategoryDto, UpdateCategoryDto } from './dto';
 import { stringToSlug } from 'src/utils';
 
 @Injectable()
@@ -24,6 +24,18 @@ export class CategoryService {
     return await this.prismaService.category.delete({
       where: {
         id,
+      },
+    });
+  }
+
+  async updateCategory(id: string, body: UpdateCategoryDto) {
+    return await this.prismaService.category.update({
+      where: {
+        id,
+      },
+      data: {
+        ...body,
+        slug: stringToSlug(body.name),
       },
     });
   }
