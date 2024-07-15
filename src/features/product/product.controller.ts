@@ -13,6 +13,7 @@ import { ProductService } from './product.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CommentDto } from '../comment/dto';
 import { CommentService } from '../comment/comment.service';
+import { Public } from 'src/core/decorators';
 
 @Controller('products')
 @ApiTags('products')
@@ -28,6 +29,7 @@ export class ProductController {
   }
 
   @Get()
+  @Public()
   async getAllProducts(
     @Query('page') page: string,
     @Query('sort') sort: string,
@@ -54,6 +56,12 @@ export class ProductController {
     return await this.commentService.getCommentsByProductId(id);
   }
 
+  @Get('search')
+  @Public()
+  async searchProducts(@Query('q') q: string) {
+    return await this.productService.searchProducts(q);
+  }
+
   @Patch(':id/update-best-seller-and-stock')
   async updateStatus(@Param('id') id: string, @Body() body: UpdateStatusDto) {
     return await this.productService.updateStatus(id, body);
@@ -73,7 +81,20 @@ export class ProductController {
     return await this.commentService.createComment(id, body);
   }
 
+  @Get('best-seller')
+  @Public()
+  async getBestSellerProducts(@Query('limit') limit: string){
+    return await this.productService.getBestSellerProducts(limit ? +limit : 10);
+  }
+
+  @Get('discount')
+  @Public()
+  async getDiscountProducts(@Query('limit') limit: string){
+    return await this.productService.getDiscountProducts(limit ? +limit : 10);
+  }
+
   @Get(':slug')
+  @Public()
   async getProductBySlug(@Param('slug') slug: string) {
     return await this.productService.getProductBySlug(slug);
   }

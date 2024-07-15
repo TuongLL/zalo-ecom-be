@@ -74,6 +74,7 @@ export class ProductService {
 
   async getAllProducts(dto: QueryParamsProduct) {
     const { page, sort, categoryId, ratingPoint, filterByPrice } = dto;
+
     const skip = this.LIMIT * (page - 1 || 0);
 
     const countAllProducts = await this.prismaService.product.count({
@@ -83,7 +84,9 @@ export class ProductService {
             categoryId: categoryId,
           },
         },
-        ratingPoint: ratingPoint,
+        ratingPoint: {
+          gte: ratingPoint,
+        },
         price: {
           gte: filterByPrice?.startPrice,
           lte: filterByPrice?.endPrice,
@@ -94,7 +97,18 @@ export class ProductService {
       skip,
       take: this.LIMIT,
       orderBy: {
-        price: sort === 'price-asc' ? 'asc' : 'desc',
+        price:
+          sort === 'price-asc'
+            ? 'asc'
+            : sort == 'price-desc'
+              ? 'desc'
+              : undefined,
+        createdAt:
+          sort === 'date-asc'
+            ? 'asc'
+            : sort == 'date-desc'
+              ? 'desc'
+              : undefined,
       },
       where: {
         ProductCategory: {
@@ -102,7 +116,9 @@ export class ProductService {
             categoryId: categoryId,
           },
         },
-        ratingPoint: ratingPoint,
+        ratingPoint: {
+          gte: ratingPoint,
+        },
         price: {
           gte: filterByPrice?.startPrice,
           lte: filterByPrice?.endPrice,
@@ -197,5 +213,38 @@ export class ProductService {
       });
     });
     return true;
+  }
+
+  async getBestSellerProducts(limit: number) {
+    return await this.prismaService.product.findMany({
+      take: limit,
+      where: {
+        isBestSeller: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async getDiscountProducts(limit: number) {
+    return await this.prismaService.product.findMany({
+      take: limit,
+      where: {
+        discountPrice: {
+          gte: 0,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async searchProducts(q: string) {
+    return await this.prismaService.$queryRaw`
+    SELECT * FROM "Product"
+    WHERE unaccent("name") ILIKE unaccent(${`%${q}%`})
+  `;
   }
 }

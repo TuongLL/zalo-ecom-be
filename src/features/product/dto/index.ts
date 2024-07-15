@@ -68,7 +68,7 @@ export class MediaType {
 export interface QueryParamsProduct {
   page?: number;
 
-  sort?: 'price-asc' | 'price-desc';
+  sort?: 'price-asc' | 'price-desc' | 'date-asc' | 'date-desc';
 
   filterByPrice?: {
     startPrice: number;

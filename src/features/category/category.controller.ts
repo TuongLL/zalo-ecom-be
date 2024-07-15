@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { CategoryDto, UpdateCategoryDto } from './dto';
 import { CategoryService } from './category.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/core/decorators';
 
 @Controller('categories')
 @ApiTags('categories')
@@ -15,6 +16,7 @@ export class CategoryController {
   }
 
   @Get()
+  @Public()
   async getAllCategories() {
     return await this.categoryService.getAllCategories();
   }

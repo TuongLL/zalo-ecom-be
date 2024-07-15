@@ -33,7 +33,6 @@ export class OrderService {
   }
 
   async getOrder(page: number = 1) {
-    console.log(page);
     return await this.prismaServie.order.findMany({
       skip: (page - 1) * 10,
       take: 10,
@@ -49,6 +48,18 @@ export class OrderService {
       },
       data: {
         status: body.status,
+      },
+    });
+  }
+
+  async getOrderByPhone(phone: string) {
+    console.log(phone)
+    return await this.prismaServie.order.findMany({
+      where: {
+        phone,
+      },
+      include: {
+        OrderItem: true,
       },
     });
   }
