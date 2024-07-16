@@ -23,6 +23,14 @@ export class ProductController {
     private readonly commentService: CommentService,
   ) {}
 
+  @Post('/variants/check')
+  async checkVariants(@Body() body: { variantIds: string[] }) {
+    console.log(body);
+    return {
+      variantIds: await this.productService.checkVariant(body.variantIds),
+    };
+  }
+
   @Post('create')
   async createProduct(@Body() dto: ProductCreateDto) {
     return await this.productService.createProduct(dto);
@@ -83,13 +91,13 @@ export class ProductController {
 
   @Get('best-seller')
   @Public()
-  async getBestSellerProducts(@Query('limit') limit: string){
+  async getBestSellerProducts(@Query('limit') limit: string) {
     return await this.productService.getBestSellerProducts(limit ? +limit : 10);
   }
 
   @Get('discount')
   @Public()
-  async getDiscountProducts(@Query('limit') limit: string){
+  async getDiscountProducts(@Query('limit') limit: string) {
     return await this.productService.getDiscountProducts(limit ? +limit : 10);
   }
 

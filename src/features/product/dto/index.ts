@@ -58,6 +58,7 @@ interface Variant {
   name: string;
   price: number;
   discountPrice: number;
+  isStock: boolean;
 }
 
 export class MediaType {

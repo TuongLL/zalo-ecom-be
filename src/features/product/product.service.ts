@@ -133,6 +133,7 @@ export class ProductService {
   }
 
   async updateProduct(id: string, body: ProductCreateDto) {
+    console.log(id);
     const { categoryId, variants, ...productDto } = body;
     const product = await this.prismaService.$transaction(async (prisma) => {
       const updatedProduct = await prisma.product.update({
@@ -177,7 +178,7 @@ export class ProductService {
         await prisma.productVariant.createMany({
           data: variants.map((variant) => ({
             ...variant,
-            productId: product.id,
+            productId: id,
           })),
         });
       }
@@ -246,5 +247,18 @@ export class ProductService {
     SELECT * FROM "Product"
     WHERE unaccent("name") ILIKE unaccent(${`%${q}%`})
   `;
+  }
+
+  async checkVariant(variantIds: string[]) {
+    const ids = [];
+    for (let i = 0; i < variantIds.length; i++) {
+      const variant = await this.prismaService.productVariant.findUnique({
+        where: {
+          id: variantIds[i],
+        },
+      });
+      variant && ids.push(variant.id);
+    }
+    return ids;
   }
 }

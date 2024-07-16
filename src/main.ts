@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.enableCors()
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => new BadRequestException(errors),
@@ -23,6 +23,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(3003);
+  await app.listen(3000);
 }
 bootstrap();
